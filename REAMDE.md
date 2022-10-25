@@ -18,26 +18,21 @@ Reading will be relatively very less, as I plan to store the day's location data
 ```sql
 DROP TABLE users;
 CREATE TABLE users (
-    username VARCHAR(255) NOT NULL,
-    pwd VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL
+    username VARCHAR(100) NOT NULL,
+    phone VARCHAR(13) UNIQUE NOT NULL
 );
 
 DROP TABLE locations;
 CREATE TABLE locations (
-    user_email INTEGER NOT NULL,
+    phone VARCHAR(13) UNIQUE NOT NULL,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
     loc_timestamp TIMESTAMP NOT NULL
 );
 
-INSERT INTO USERS(id, username, password, email) VALUES(
-	DEFAULT,
-	"Sarthak",
-	"1122212",
-	"sarthak@gmail.com",
-	DEFAULT,
-	DEFAULT,
+INSERT INTO USERS(username,phone) VALUES(
+	'Sarthak',
+    '1234567890'
 );
 
 --every 5minutes we will have to insert a row in table for every user.
