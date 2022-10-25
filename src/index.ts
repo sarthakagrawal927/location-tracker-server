@@ -1,10 +1,9 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
-import { db } from './utils/db';
-import { catcher } from './utils/helpers';
-import { Server } from "socket.io"
+import dotenv from 'dotenv';
+import express, { Express } from 'express';
 import bodyParser from 'body-parser';
+import { Server } from 'http';
+import { initializeSocket } from './utils/socket';
 
 dotenv.config();
 
@@ -15,26 +14,12 @@ app.use(express.json());
 app.use(cors())
 app.use(bodyParser.json());
 
+app.use('/users', require('./routes/users'));
+app.use('locations', require('./routes/locations'));
 
-app.get('/users', catcher(async (_req: Request, res: Response) => {
-    const users = await db.many('SELECT * from users')
-    res.json({ users });
-}));
-
-const server = app.listen(port, () => {
+const server: Server = app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });
 
-const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:3000'
-    }
-});
+initializeSocket(server);
 
-io.on('connection', (socket) => {
-    console.log('a user connected');
-});
-
-setInterval(() => {
-    io.emit('message', 'hello world');
-}, 1000)
