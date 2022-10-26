@@ -8,7 +8,7 @@ let activeSocket: string
 
 export const initializeSocket = (server: HttpServer) => {
     io = new Server(server, {
-        cors: { origin: 'http://localhost:3000' }
+        cors: { origin: process.env.WEB_URL }
     });
 
     io.on('connection', (socket) => {
@@ -34,7 +34,8 @@ export const initializeSocket = (server: HttpServer) => {
             phone: activeSocket,
             timestamp: Date.now()
         }
-        if (activeSocket) sendLocationObject(newObj)
+        // if (activeSocket)
+        sendLocationObject(newObj)
     }, 1000)
 }
 

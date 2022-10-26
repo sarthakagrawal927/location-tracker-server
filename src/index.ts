@@ -17,8 +17,9 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
+
 app.use('/users', require('./routes/users'));
-app.use('locations', require('./routes/locations'));
+app.use('/locations', require('./routes/locations'));
 
 const server: Server = app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
