@@ -4,6 +4,7 @@ import { LocationObject } from './types';
 import { handleNewLocationObject } from "./brains";
 
 let io: Server
+let activeSocket: string
 
 export const initializeSocket = (server: HttpServer) => {
     io = new Server(server, {
@@ -20,17 +21,21 @@ export const initializeSocket = (server: HttpServer) => {
         socket.on('disconnect', () => {
             console.log('Client disconnected');
         });
+
+        socket.on('subscribe', (phone: string) => {
+            activeSocket = phone;
+        })
     });
 
     setInterval(() => {
         const newObj = {
             lat: 27 + Math.random(),
             lng: 80 + Math.random(),
-            phone: '123',
+            phone: activeSocket,
             timestamp: Date.now()
         }
-        sendLocationObject(newObj)
-    }, 10000)
+        if (activeSocket) sendLocationObject(newObj)
+    }, 1000)
 }
 
 export const sendLocationObject = (data: LocationObject) => {
