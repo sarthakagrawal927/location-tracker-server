@@ -1,7 +1,7 @@
-import { Server } from "socket.io"
 import { Server as HttpServer } from 'http';
+import { Server } from "socket.io";
+import { addLocationsToDb, handleNewLocationObject } from "./brains";
 import { LocationObject } from './types';
-import { handleNewLocationObject } from "./brains";
 
 let io: Server
 let activeSocket: string
@@ -29,14 +29,17 @@ export const initializeSocket = (server: HttpServer) => {
 
     setInterval(() => {
         const newObj = {
-            lat: 27 + Math.random(),
-            lng: 80 + Math.random(),
-            phone: activeSocket,
+            lat: 26.8467 + Math.random(),
+            lng: 80.9462 + Math.random(),
+            phone: activeSocket || '0',
             timestamp: Date.now()
         }
-        // if (activeSocket)
-        sendLocationObject(newObj)
-    }, 1000)
+        handleNewLocationObject(newObj)
+    }, 500)
+
+    setInterval(() => {
+        addLocationsToDb();
+    }, 5000)
 }
 
 export const sendLocationObject = (data: LocationObject) => {
