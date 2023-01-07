@@ -1,7 +1,8 @@
 import { Server as HttpServer } from 'http';
 import { Server } from "socket.io";
-import { addLocationsToDb, handleNewLocationObject } from "./brains";
+import { handleLocations, handleNewLocationObject } from "./brains";
 import { LocationObject } from './types';
+import { receiveLocationTimer, storeLocationInDBTimer } from './constants';
 
 let io: Server
 let activeSocket: string
@@ -31,15 +32,15 @@ export const initializeSocket = (server: HttpServer) => {
         const newObj = {
             lat: 26.8467 + Math.random(),
             lng: 80.9462 + Math.random(),
-            phone: activeSocket || '0',
+            phone: activeSocket || Math.floor(Math.random() * 3) + "",
             timestamp: Date.now()
         }
         handleNewLocationObject(newObj)
-    }, 500)
+    }, receiveLocationTimer / (process.env.MODE === "DEV" ? 20 : 1))
 
     setInterval(() => {
-        addLocationsToDb();
-    }, 5000)
+        handleLocations();
+    }, storeLocationInDBTimer / (process.env.MODE === "DEV" ? 20 : 1))
 }
 
 export const sendLocationObject = (data: LocationObject) => {

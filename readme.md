@@ -24,7 +24,8 @@ CREATE TABLE users (
 
 DROP TABLE locations;
 CREATE TABLE locations (
-    phone VARCHAR(13) UNIQUE NOT NULL,
+    id SERIAL PRIMARY KEY,
+    phone VARCHAR(13) NOT NULL,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
     loc_timestamp TIMESTAMP NOT NULL
@@ -42,3 +43,9 @@ We can use Redis heavily when we scale, but for now, I think Postgres will be go
 
 ## Realtime
 Every 5seconds all N users will be sending their coordinates which are to be send to the web client & occasionally store them in-memory/DB. We can use message queues, but as these are built on sockets & we don't need the extra functionalities they provide, we can just use sockets.
+
+We need store minute wise location in Database, so every 60s, N insertions will be made to the database.
+
+Since we won't be modifying the location once written, we can use Elastic Search with time based index. Once it scales doing that will make more sense.
+
+While storing to ensure the main thread isn't blocked we can avoid using await or use some sort of worker thread.

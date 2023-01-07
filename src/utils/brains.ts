@@ -1,9 +1,12 @@
 import { sendLocationObject } from './socket';
+import { receiveLocationTimer, storeLocationInDBTimer } from './constants';
+
 import { LocationObject } from './types';
+import { addLocationsToDB } from '../controllers/locations';
 
 const STORAGE_MAP = new Map<string, LocationObject[]>();
 const LOCATION_COUNT_MAP = new Map<string, number>();
-const STORAGE_RATIO = 10; // will store 1 out of 10 location objects
+const STORAGE_RATIO = storeLocationInDBTimer / receiveLocationTimer; // will store 1 out of 10 location objects
 
 export const handleNewLocationObject = (data: LocationObject) => {
     const { phone } = data;
@@ -18,13 +21,12 @@ export const handleNewLocationObject = (data: LocationObject) => {
     sendLocationObject(data);
 }
 
-export const addLocationsToDb = async () => {
+export const handleLocations = async () => {
     const locationObjects = Array.from(STORAGE_MAP.values()).flat();
-    clearObjects();
-
-    // store this into DB
-
-    // understand issues of huge concurrent reads & writes
+    if (locationObjects.length > 0) {
+        clearObjects();
+        await addLocationsToDB(locationObjects)
+    }
 }
 
 const clearObjects = () => {
