@@ -33,7 +33,7 @@ export const initializeSocket = (server: HttpServer) => {
             lat: 26.8467 + Math.random(),
             lng: 80.9462 + Math.random(),
             phone: activeSocket || Math.floor(Math.random() * 3) + "",
-            timestamp: Date.now()
+            timestamp: Date.now()  // - 2 * 100000000 // subtracts 2 days
         }
         handleNewLocationObject(newObj)
     }, receiveLocationTimer / (process.env.MODE === "DEV" ? 20 : 1))
