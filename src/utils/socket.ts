@@ -15,8 +15,9 @@ export const initializeSocket = (server: HttpServer) => {
     io.on('connection', (socket) => {
         console.log('New client connected');
 
-        socket.on('newLocationObject', (locationObject: LocationObject) => {
-            handleNewLocationObject(locationObject);
+        socket.on('newLocationObject', (locationObject: string) => {
+            console.log({ locationObject })
+            handleNewLocationObject(JSON.parse(locationObject) as LocationObject);
         });
 
         socket.on('disconnect', () => {
@@ -28,19 +29,19 @@ export const initializeSocket = (server: HttpServer) => {
         })
     });
 
-    setInterval(() => {
-        const newObj = {
-            lat: 26.8467 + Math.random(),
-            lng: 80.9462 + Math.random(),
-            phone: activeSocket || Math.floor(Math.random() * 3) + "",
-            timestamp: Date.now()  // - 2 * 100000000 // subtracts 2 days
-        }
-        handleNewLocationObject(newObj)
-    }, receiveLocationTimer / (process.env.MODE === "DEV" ? 20 : 1))
+    // setInterval(() => {
+    //     const newObj = {
+    //         lat: 26.8467 + Math.random(),
+    //         lng: 80.9462 + Math.random(),
+    //         phone: activeSocket || Math.floor(Math.random() * 3) + "",
+    //         timestamp: Date.now()  // - 2 * 100000000 // subtracts 2 days
+    //     }
+    //     handleNewLocationObject(newObj)
+    // }, receiveLocationTimer / (process.env.MODE === "DEV" ? 20 : 1))
 
-    setInterval(() => {
-        handleLocations();
-    }, storeLocationInDBTimer / (process.env.MODE === "DEV" ? 20 : 1))
+    // setInterval(() => {
+    //     handleLocations();
+    // }, storeLocationInDBTimer / (process.env.MODE === "DEV" ? 20 : 1))
 }
 
 export const sendLocationObject = (data: LocationObject) => {
