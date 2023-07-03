@@ -16,6 +16,7 @@ const pgpInstance = pgp(dbOptions);
 dotenv.config();
 
 export const db = pgpInstance({
+    connectionString: process.env.DATABASE_URL,
     host: process.env.DATABASE_HOST,
     port: parseInt(process.env.DATABASE_PORT as string),
     database: process.env.DATABASE_NAME,
